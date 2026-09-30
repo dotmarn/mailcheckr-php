@@ -59,3 +59,17 @@ Route::post('/webhooks/mailcheckr', function (Request $request, WebhookVerifier 
 ```
 
 The verifier checks the `X-MailCheckr-Signature` HMAC against `X-MailCheckr-Timestamp` and the exact body, and rejects timestamps outside the configured tolerance. Store processed event IDs because valid deliveries may be retried.
+
+## Contributing
+
+**Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities.
+
+## How can I thank you?
+
+Why not star the github repo? I'd love the attention! Why not share the link for this repository on Twitter.
+
+Don't forget to [follow me on twitter](https://twitter.com/oluwalosheyii)!
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.**
