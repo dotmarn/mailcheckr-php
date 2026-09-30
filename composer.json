@@ -1,6 +1,7 @@
 {
   "name": "dotmarn/mailcheckr-php",
-  "description": "description",
+  "description": "Laravel client for the MailCheckr email verification API",
+  "type": "library",
   "license": "MIT",
   "homepage": "https://github.com/dotmarn/mailcheckr-php",
   "authors": [
@@ -10,15 +11,15 @@
       "role": "Owner"
     }
   ],
-  "keywords": [
-    "PHP",
-    "Laravel",
-    "Email Verifier",
-    "Email Verification"
-  ],
+  "keywords": ["mailcheckr", "laravel", "email verification"],
   "require": {
-    "php": ">=8.0"
+    "php": "^8.2",
+    "illuminate/container": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+    "illuminate/http": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+    "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0"
   },
-  "autoload": {},
+  "autoload": {"psr-4": {"Dotmarn\\MailCheckr\\": "src/"}},
+  "scripts": {"test": "php tests/run.php"},
+  "extra": {"laravel": {"providers": ["Dotmarn\\MailCheckr\\MailCheckrServiceProvider"], "aliases": {"MailCheckr": "Dotmarn\\MailCheckr\\Facades\\MailCheckr"}}},
   "prefer-stable": true
 }

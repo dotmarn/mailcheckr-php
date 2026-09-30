@@ -1,1 +1,61 @@
-# mailcheckr-php
+# MailCheckr for Laravel
+
+Laravel client for the [MailCheckr API](https://mailcheckr.app/docs). Requires PHP 8.2+ and Laravel 10–13.
+
+## Install
+
+```bash
+composer require dotmarn/mailcheckr-php
+```
+
+The service provider and facade are discovered automatically. Add your server-side API key to `.env`:
+
+```dotenv
+MAILCHECKR_API_KEY=mc_live_your_api_key
+MAILCHECKR_WEBHOOK_SECRET=your_webhook_signing_secret
+```
+
+Optional settings: `MAILCHECKR_BASE_URL`, `MAILCHECKR_TIMEOUT` (seconds, default 30), and `MAILCHECKR_WEBHOOK_TOLERANCE` (seconds, default 300). Publish the configuration with `php artisan vendor:publish --tag=mailcheckr-config`.
+
+## Verify an address
+
+```php
+use Dotmarn\MailCheckr\MailCheckrClient;
+
+$verification = app(MailCheckrClient::class)->verify(
+    'person@example.com',
+    'verify-user-123' // persist and reuse this key for retries of the same email
+);
+
+if ($verification['state'] !== 'completed') {
+    $verification = app(MailCheckrClient::class)->find($verification['id']);
+}
+
+if ($verification['state'] === 'completed') {
+    // Inspect $verification['status']: deliverable, undeliverable, risky, or unknown.
+}
+```
+
+`verify()` returns the `data` object for HTTP 200 and 202. Pending states include `queued`, `processing`, and `retry_scheduled`; poll the ID or handle a webhook. Do not treat a pending or unknown result as deliverable.
+
+The `MailCheckr` facade exposes the same `verify()` and `find()` methods. API errors throw `Dotmarn\MailCheckr\Exceptions\MailCheckrException`, with `status` and `response` properties. Network errors are raised by Laravel's HTTP client.
+
+## Verify webhook deliveries
+
+Configure an HTTPS endpoint in the MailCheckr dashboard. Verify the raw request body before processing `verification.completed` or `bulk_verification.completed`:
+
+```php
+use Dotmarn\MailCheckr\WebhookVerifier;
+use Illuminate\Http\Request;
+
+Route::post('/webhooks/mailcheckr', function (Request $request, WebhookVerifier $verifier) {
+    abort_unless($verifier->verify($request), 401);
+
+    $event = $request->json()->all();
+    // Deduplicate by $event['id'] in persistent storage before applying effects.
+
+    return response()->noContent();
+});
+```
+
+The verifier checks the `X-MailCheckr-Signature` HMAC against `X-MailCheckr-Timestamp` and the exact body, and rejects timestamps outside the configured tolerance. Store processed event IDs because valid deliveries may be retried.
