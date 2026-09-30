@@ -1,0 +1,24 @@
+{
+  "name": "dotmarn/mailcheckr-php",
+  "description": "description",
+  "license": "MIT",
+  "homepage": "https://github.com/dotmarn/mailcheckr-php",
+  "authors": [
+    {
+      "name": "Ridwan Kasim",
+      "email": "kasimsheyi20@gmail.com",
+      "role": "Owner"
+    }
+  ],
+  "keywords": [
+    "PHP",
+    "Laravel",
+    "Email Verifier",
+    "Email Verification"
+  ],
+  "require": {
+    "php": ">=8.0"
+  },
+  "autoload": {},
+  "prefer-stable": true
+}
