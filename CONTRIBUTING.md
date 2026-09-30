@@ -4,7 +4,7 @@ Thanks for helping improve the package. Bug reports, documentation fixes, tests,
 
 ## Before opening a pull request
 
-1. Search existing issues and pull requests. For a larger change, open an issue first to discuss the API and compatibility impact.
+1. Search existing issues and pull requests. For a larger change, open an issue first to discuss the impact.
 2. Keep the change focused and add PHPUnit coverage for changed behavior. Use Laravel's HTTP fake for API calls; tests must not require a MailCheckr account or live API key.
 3. Run `composer test` and `composer validate --strict` locally. The pull request workflow checks supported Laravel and PHP versions.
 4. Describe the behavior changed, why it changed, and how you tested it in the pull request.
