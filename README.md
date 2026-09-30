@@ -42,11 +42,14 @@ The `MailCheckr` facade exposes the same `verify()` and `find()` methods. API er
 
 ## Verify webhook deliveries
 
-Configure an HTTPS endpoint in the MailCheckr dashboard. Verify the raw request body before processing `verification.completed` or `bulk_verification.completed`:
+Configure an HTTPS endpoint in the MailCheckr dashboard. Put the route below in `routes/api.php` so Laravel's web CSRF middleware does not reject MailCheckr's POST requests. In Laravel 11–13, add `api: __DIR__.'/../routes/api.php'` to the existing `withRouting(...)` call in `bootstrap/app.php` if API routing is not already registered. With Laravel's default API prefix, set the dashboard URL to `https://your-app.example/api/webhooks/mailcheckr`.
+
+Verify the raw request body before processing `verification.completed` or `bulk_verification.completed`:
 
 ```php
 use Dotmarn\MailCheckr\WebhookVerifier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/webhooks/mailcheckr', function (Request $request, WebhookVerifier $verifier) {
     abort_unless($verifier->verify($request), 401);
@@ -62,7 +65,7 @@ The verifier checks the `X-MailCheckr-Signature` HMAC against `X-MailCheckr-Time
 
 ## Contributing
 
-**Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities.
+Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities.
 
 ## How can I thank you?
 
@@ -72,4 +75,4 @@ Don't forget to [follow me on twitter](https://twitter.com/oluwalosheyii)!
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE) for more information.**
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

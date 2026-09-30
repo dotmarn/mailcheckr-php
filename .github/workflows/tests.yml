@@ -12,7 +12,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4']
+        include:
+          - php: '8.2'
+            laravel: '10'
+            testbench: '8'
+            security_flag: '--no-security-blocking'
+          - php: '8.2'
+            laravel: '11'
+            testbench: '9'
+            security_flag: '--no-security-blocking'
+          - php: '8.2'
+            laravel: '12'
+            testbench: '10'
+            security_flag: ''
+          - php: '8.3'
+            laravel: '13'
+            testbench: '11'
+            security_flag: ''
+          - php: '8.4'
+            laravel: '13'
+            testbench: '11'
+            security_flag: ''
 
     steps:
       - name: Check out code
@@ -26,8 +46,9 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Install Laravel ${{ matrix.laravel }} test dependencies
+        # Historical Laravel versions have advisories; bypass blocking only in those test jobs.
+        run: composer require --dev "laravel/framework:^${{ matrix.laravel }}.0" "orchestra/testbench:^${{ matrix.testbench }}.0" --with-all-dependencies ${{ matrix.security_flag }} --prefer-dist --no-interaction --no-progress
 
       - name: Run tests
         run: composer test
