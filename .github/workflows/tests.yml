@@ -2,6 +2,9 @@ name: Tests
 
 on:
   pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -52,3 +55,12 @@ jobs:
 
       - name: Run tests
         run: composer test
+
+  required-tests:
+    name: Package tests
+    needs: phpunit
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test matrix
+        run: test '${{ needs.phpunit.result }}' = 'success'
