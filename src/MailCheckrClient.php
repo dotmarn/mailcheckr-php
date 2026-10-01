@@ -9,28 +9,35 @@ use RuntimeException;
 
 class MailCheckrClient
 {
-    public function __construct(
-        private readonly ?string $apiKey,
-        private readonly string $baseUrl = 'https://mailcheckr.app/api/v1',
-        private readonly int $timeout = 30
-    ) {}
+    private readonly ?string $apiKey;
 
-    public function verify(string $email, string $idempotencyKey): array
+    private readonly string $baseUrl;
+
+    private readonly int $timeout;
+
+    public function __construct()
+    {
+        $this->apiKey = config('mailcheckr.api_key');
+        $this->baseUrl = config('mailcheckr.base_url');
+        $this->timeout = config('mailcheckr.timeout');
+    }
+
+    public function verify(string $email, string $idempotencyKey): VerificationResult
     {
         if ($email === '' || $idempotencyKey === '') {
             throw new InvalidArgumentException('Email and idempotency key are required.');
         }
 
-        return $this->request('post', 'verifications', ['email' => $email], $idempotencyKey);
+        return new VerificationResult($this->request('post', 'verifications', ['email' => $email], $idempotencyKey));
     }
 
-    public function find(string $id): array
+    public function find(string $id): VerificationResult
     {
         if ($id === '' || str_contains($id, '/')) {
             throw new InvalidArgumentException('A valid verification ID is required.');
         }
 
-        return $this->request('get', 'verifications/'.rawurlencode($id));
+        return new VerificationResult($this->request('get', 'verifications/'.rawurlencode($id)));
     }
 
     private function request(string $method, string $path, array $body = [], ?string $idempotencyKey = null): array

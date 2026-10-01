@@ -30,7 +30,8 @@ class LaravelIntegrationTest extends TestCase
 
         Http::fake(['*' => Http::response(['data' => ['id' => 'integration-id', 'state' => 'queued']], 202)]);
 
-        $this->assertSame('integration-id', MailCheckr::verify('person@example.com', 'integration-1')['id']);
+        $this->assertSame('integration-id', MailCheckr::verify('person@example.com', 'integration-1')->id());
+        $this->assertTrue(MailCheckr::verify('person@example.com', 'integration-2')->isPending());
         Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer integration-key')
             && $request->hasHeader('Idempotency-Key', 'integration-1'));
 
