@@ -3,8 +3,8 @@
 use Dotmarn\MailCheckr\Exceptions\MailCheckrException;
 use Dotmarn\MailCheckr\MailCheckrClient;
 use Dotmarn\MailCheckr\VerificationResult;
-use Illuminate\Container\Container;
 use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Http;
@@ -16,8 +16,8 @@ class MailCheckrClientTest extends TestCase
     {
         parent::setUp();
 
-        $container = new Container();
-        $container->instance('http', new Factory());
+        $container = new Container;
+        $container->instance('http', new Factory);
         $container->instance('config', new Repository([
             'mailcheckr' => [
                 'api_key' => 'test-key',
@@ -46,7 +46,7 @@ class MailCheckrClientTest extends TestCase
             'mailcheckr.app/api/v1/verifications/id-1' => Http::response(['data' => ['id' => 'id-1', 'state' => 'completed', 'status' => 'deliverable']], 200),
         ]);
 
-        $client = new MailCheckrClient();
+        $client = new MailCheckrClient;
 
         $this->assertSame('queued', $client->verify('person@example.com', 'person-1')->state());
         $this->assertTrue($client->find('id-1')->isDeliverable());
@@ -62,7 +62,7 @@ class MailCheckrClientTest extends TestCase
         Http::fake(['*' => Http::response(['code' => 'insufficient_credits'], 402)]);
 
         try {
-            (new MailCheckrClient())->verify('person@example.com', 'person-2');
+            (new MailCheckrClient)->verify('person@example.com', 'person-2');
             $this->fail('Expected a MailCheckrException.');
         } catch (MailCheckrException $exception) {
             $this->assertSame(402, $exception->status);
@@ -77,7 +77,7 @@ class MailCheckrClientTest extends TestCase
             'data' => ['id' => 'custom-id', 'state' => 'queued'],
         ], 202)]);
 
-        $result = (new MailCheckrClient())->verify('person@example.com', 'custom-1');
+        $result = (new MailCheckrClient)->verify('person@example.com', 'custom-1');
 
         $this->assertSame('custom-id', $result->id());
         Http::assertSent(fn ($request) => $request->url() === 'https://custom.example/api/verifications');
@@ -90,7 +90,7 @@ class MailCheckrClientTest extends TestCase
             'mailcheckr.app/api/v1/verifications/id-2' => Http::response(['data' => ['id' => 'id-2', 'state' => 'completed', 'status' => 'unknown']], 200),
         ]);
 
-        $client = new MailCheckrClient();
+        $client = new MailCheckrClient;
 
         $pending = $client->verify('person@example.com', 'person-2');
         $this->assertInstanceOf(VerificationResult::class, $pending);

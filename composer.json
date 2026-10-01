@@ -21,10 +21,11 @@
   },
   "require-dev": {
     "orchestra/testbench": "^8.0 || ^9.0 || ^10.0 || ^11.0",
-    "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0"
+    "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0",
+    "laravel/pint": "^1.0"
   },
   "autoload": {"psr-4": {"Dotmarn\\MailCheckr\\": "src/"}},
-  "scripts": {"test": "phpunit"},
+  "scripts": {"test": "phpunit", "style": "pint", "style:check": "pint --test"},
   "extra": {"laravel": {"providers": ["Dotmarn\\MailCheckr\\MailCheckrServiceProvider"], "aliases": {"MailCheckr": "Dotmarn\\MailCheckr\\Facades\\MailCheckr"}}},
   "prefer-stable": true
 }

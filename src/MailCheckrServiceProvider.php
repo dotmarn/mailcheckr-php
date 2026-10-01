@@ -10,7 +10,7 @@ class MailCheckrServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/mailcheckr.php', 'mailcheckr');
 
-        $this->app->singleton(MailCheckrClient::class, fn () => new MailCheckrClient());
+        $this->app->singleton(MailCheckrClient::class, fn () => new MailCheckrClient);
 
         $this->app->singleton(WebhookVerifier::class, fn ($app) => new WebhookVerifier(
             $app['config']->get('mailcheckr.webhook_secret'),
