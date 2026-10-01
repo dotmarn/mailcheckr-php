@@ -10,6 +10,25 @@ permissions:
   contents: read
 
 jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Check PHP style
+        run: composer style:check
+
   phpunit:
     runs-on: ubuntu-latest
     strategy:
@@ -58,9 +77,9 @@ jobs:
 
   required-tests:
     name: Package tests
-    needs: phpunit
+    needs: [phpunit, style]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check test matrix
-        run: test '${{ needs.phpunit.result }}' = 'success'
+        run: test '${{ needs.phpunit.result }}' = 'success' && test '${{ needs.style.result }}' = 'success'
