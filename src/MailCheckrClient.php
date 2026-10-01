@@ -18,8 +18,8 @@ class MailCheckrClient
     public function __construct()
     {
         $this->apiKey = config('mailcheckr.api_key');
-        $this->baseUrl = config('mailcheckr.base_url') ?? 'https://mailcheckr.app/api/v1';
-        $this->timeout = config('mailcheckr.timeout') ?? 30;
+        $this->baseUrl = config('mailcheckr.base_url');
+        $this->timeout = config('mailcheckr.timeout');
     }
 
     public function verify(string $email, string $idempotencyKey): VerificationResult
