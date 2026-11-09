@@ -1,5 +1,11 @@
 # MailCheckr for Laravel
 
+[![Latest Stable Version](https://poser.pugx.org/dotmarn/mailcheckr-php/v)](https://packagist.org/packages/dotmarn/mailcheckr-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/dotmarn/mailcheckr-php.svg?style=flat-square)](https://packagist.org/packages/dotmarn/mailcheckr-php)
+[![License](https://poser.pugx.org/dotmarn/mailcheckr-php/license)](LICENSE)
+[![PHP Version Require](https://poser.pugx.org/dotmarn/mailcheckr-php/require/php)](https://packagist.org/packages/dotmarn/mailcheckr-php)
+[![Tests](https://github.com/dotmarn/mailcheckr-php/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/dotmarn/mailcheckr-php/actions/workflows/tests.yml)
+
 Laravel client for the [MailCheckr API](https://mailcheckr.app/docs). Requires PHP 8.2+ and Laravel 10–13.
 
 ## Install
