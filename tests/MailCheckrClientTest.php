@@ -43,13 +43,15 @@ class MailCheckrClientTest extends TestCase
     {
         Http::fake([
             'mailcheckr.app/api/v1/verifications' => Http::response(['data' => ['id' => 'id-1', 'state' => 'queued']], 202),
-            'mailcheckr.app/api/v1/verifications/id-1' => Http::response(['data' => ['id' => 'id-1', 'state' => 'completed', 'status' => 'deliverable']], 200),
+            'mailcheckr.app/api/v1/verifications/id-1' => Http::response(['data' => ['id' => 'id-1', 'state' => 'completed', 'status' => 'deliverable', 'action' => 'send']], 200),
         ]);
 
         $client = new MailCheckrClient;
 
         $this->assertSame('queued', $client->verify('person@example.com', 'person-1')->state());
-        $this->assertTrue($client->find('id-1')->isDeliverable());
+        $completed = $client->find('id-1');
+        $this->assertTrue($completed->isDeliverable());
+        $this->assertSame('send', $completed->action());
 
         Http::assertSent(fn ($request) => $request->method() === 'POST'
             && $request->hasHeader('Authorization', 'Bearer test-key')
@@ -87,7 +89,7 @@ class MailCheckrClientTest extends TestCase
     {
         Http::fake([
             'mailcheckr.app/api/v1/verifications' => Http::response(['data' => ['id' => 'id-2', 'state' => 'queued']], 202),
-            'mailcheckr.app/api/v1/verifications/id-2' => Http::response(['data' => ['id' => 'id-2', 'state' => 'completed', 'status' => 'unknown']], 200),
+            'mailcheckr.app/api/v1/verifications/id-2' => Http::response(['data' => ['id' => 'id-2', 'state' => 'completed', 'status' => 'unknown', 'action' => 'review']], 200),
         ]);
 
         $client = new MailCheckrClient;
@@ -99,6 +101,7 @@ class MailCheckrClientTest extends TestCase
 
         $completed = $client->find($pending->id());
         $this->assertTrue($completed->isUnknown());
+        $this->assertTrue($completed->shouldReview());
         $this->assertSame('unknown', $completed->toArray()['status']);
     }
 }

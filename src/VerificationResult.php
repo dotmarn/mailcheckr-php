@@ -34,6 +34,32 @@ final class VerificationResult
             : null;
     }
 
+    /** Return the recommended action (send, review, or reject), or null until a status is available. */
+    public function action(): ?string
+    {
+        return isset($this->data['action']) && is_string($this->data['action'])
+            ? $this->data['action']
+            : null;
+    }
+
+    /** Determine whether a completed verification recommends sending to the address. */
+    public function shouldSend(): bool
+    {
+        return $this->isCompleted() && $this->action() === 'send';
+    }
+
+    /** Determine whether a completed verification recommends reviewing the address. */
+    public function shouldReview(): bool
+    {
+        return $this->isCompleted() && $this->action() === 'review';
+    }
+
+    /** Determine whether a completed verification recommends rejecting the address. */
+    public function shouldReject(): bool
+    {
+        return $this->isCompleted() && $this->action() === 'reject';
+    }
+
     /** Determine whether verification has completed. */
     public function isCompleted(): bool
     {
