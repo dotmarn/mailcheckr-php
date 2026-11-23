@@ -65,7 +65,19 @@ if ($verification->isDeliverable()) {
 
 `verify()` and `find()` return a `VerificationResult` for HTTP 200 and 202. Pending states include `queued`, `processing`, and `retry_scheduled`; poll the ID or handle a webhook. Do not treat a pending or unknown result as deliverable.
 
-`VerificationResult` also provides `isUndeliverable()`, `isRisky()`, `isCompleted()`, and `isFailed()`. The four status helpers return `true` only when the state is `completed`; a queued result is never treated as deliverable. Use `id()`, `state()`, `status()`, or `toArray()` to inspect the response. The facade and `MailCheckrClient` expose the same methods.
+`VerificationResult` also provides `isUndeliverable()`, `isRisky()`, `isCompleted()`, and `isFailed()`. The four status helpers return `true` only when the state is `completed`; a queued result is never treated as deliverable. Use `id()`, `state()`, `status()`, `action()`, or `toArray()` to inspect the response.
+
+`action()` returns MailCheckr's recommended next step, or `null` until a status is available: `send` for deliverable addresses, `review` for risky or unknown ones, and `reject` for undeliverable ones. `shouldSend()`, `shouldReview()`, and `shouldReject()` return `true` only when the state is `completed` and the action matches.
+
+```php
+if ($verification->shouldSend()) {
+    // Safe to send.
+} elseif ($verification->shouldReview()) {
+    // Risky or unknown; decide based on your own policy.
+} elseif ($verification->shouldReject()) {
+    // Do not send.
+}
+``` The facade and `MailCheckrClient` expose the same methods.
 
 API errors throw `Dotmarn\MailCheckr\Exceptions\MailCheckrException`, with `status` and `response` properties. Network errors are raised by Laravel's HTTP client.
 
